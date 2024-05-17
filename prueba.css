@@ -1,0 +1,96 @@
+body{
+	margin: 0px;
+}
+header{
+	background-color:blue ;
+	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+header nav{
+	background-color: lightskyblue;
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+	padding: 20px 10px;
+}
+header a{
+	padding: 10px 35px;
+	text-decoration: none;
+	border: solid 2px black;
+	border-radius: 20px;
+	background-color: white;
+	color: red;
+	font-weight: bold;
+}
+header a:hover{
+	background-color: yellow;
+	color: black;
+}
+main{
+	display:flex;
+}
+main section{
+	display: flex;
+	flex-wrap: wrap;
+	padding: 2px 15px;
+	width: 50%;
+	border-top:2px solid black;
+	border-bottom:2px solid black;
+}
+main section img{
+	width: 100%;
+}
+
+main section span{
+	text-align: center;
+	width: 100%;
+	font-size: 25px;
+	font-weight: bold;
+}
+
+.marco{
+	display: flex;
+	width: 100%;
+	height: 500px;
+}
+iframe{
+	width: 100%;
+	height: 95%;
+}
+.formulario{
+	display: flex;
+	padding-top: 30px;
+	padding-bottom: 50px;
+}
+ul li{
+	list-style: none;
+}
+ol li{
+	list-style: none;
+}
+footer{
+	margin-top: 50px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-evenly;
+	padding-top:20px ;
+	padding-bottom: 50px;
+	background-color: skyblue;
+	border-top: solid black 2px;
+}
+footer a{
+	text-decoration: none;
+	background-color: black;
+	color:white ;
+	padding: 10px 35px;
+	margin-left: 2px;
+	margin-right: 2px;
+	margin-bottom: 5px;
+	border-radius: 20px;
+}
+footer a:hover{
+	background-color: white;
+	color: black;
+}
