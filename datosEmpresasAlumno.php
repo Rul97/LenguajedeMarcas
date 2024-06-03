@@ -1,12 +1,20 @@
 
 <?php
+session_start();
+if (empty($_SESSION['id'])) {
+	header("location: login.php");
+}
 //Variables
-		$host='localhost';
-		$dbname='universidad';
-		$user='root';
-		$pass='';
 		$nombre = $_POST["nombre"] ?? null;
-		$apellido_1 = $_POST["apellido_1"] ?? null;
+		$cif=$_POST["cif"] ?? null;
+		$nombre_fiscal=$_POST["nombre_fiscal"]?? null;
+		$email= $_POST['email'] ?? null;
+		$direccion=$_POST["direccion"] ?? null;
+		$localidad=$_POST[""] ?? null;
+		$provincia=$_POST[""] ?? null;
+		$numero_plazas=$_POST[""] ?? null;
+		$telefono=$_POST["telefono"] ?? null;
+		$persona_contacto=$_POST["persona_contacto"] ?? null;
 		$paginado_inicio = $_POST['paginado_inicio'] ?? 0;
 		$muestra = 15;
 		$pagina_actual = ($paginado_inicio/$muestra)+1;
@@ -21,42 +29,44 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title></title>
+	<title>Listado Empresas</title>
 </head>
 <body>
-	
-<form method="post" action="index.php">
+	<nav>
+		<a href="tutorprincipal.php">Pagina principal</a>
+		<?php
+		echo $_SESSION['id'];
+	 	?>
+	 	<a href="controlador/controlador_cerrar_sesion.php">Cerrar sesión</a>
+	 </nav>
+<form method="post" action="datosEmpresasAlumno.php">
+	<h3>Filtro</h3>
 	<label>Nombre:</label>
 	<input type="text" name="nombre" value="<?php echo isset($_POST['nombre']) ? $_POST['nombre'] : $nombre; ?>">
-	<label>Primer Apellido:</label>
-	<input type="text" name="apellido_1" value="<?php echo isset($_POST['apellido_1']) ? $_POST['apellido_1'] : $apellido_1; ?>">
+	<label>Email:</label>
+	<input type="text" name="email" value="<?php echo isset($_POST['email']) ? $_POST['email'] : $email; ?>">
 	<input type="submit" name="Filtrar">
 
-
-
 	<?php
-
 		try{
 		//Conexion a la base de datos
-			$pdo= new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user,$pass);
-			$pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			
+		include ("conexion.php");
 
 		//Consulta para calcular los registros
-		$sql_registros="SELECT COUNT(*) as registros from alumno where true";
+		$sql_registros="SELECT COUNT(*) as registros from empresa where true";
 		
-		//Consulta paaar mostrar los datos
-		$query="SELECT * FROM alumno WHERE true";
+		//Consulta para mostrar los datos
+		$query="SELECT * FROM empresa WHERE true";
 
 		//Concatenacion de filtros
 		if ($nombre) {
-			$query .=" AND NOMBRE like :nombre";
-			$sql_registros .=" AND NOMBRE like :nombre";
+			$query .=" AND nombre like :nombre";
+			$sql_registros .=" AND nombre like :nombre";
 		}
 
-		if ($apellido_1) {
-			$query.=" AND APELLIDO_1 like :apellido_1";
-			$sql_registros.=" AND APELLIDO_1 like :apellido_1";
+		if ($email) {
+			$query.=" AND email like :email";
+			$sql_registros.=" AND email like :email";
 		}
 
 		$query .=" limit :paginado_inicio , :muestra";
@@ -72,10 +82,10 @@
 			$stmt2->bindParam(':nombre', $nombre, PDO::PARAM_STR);
 		}
 		
-		if ($apellido_1) {
-			$apellido_1 = "%$apellido_1%";
-			$stmt->bindParam(':apellido_1', $apellido_1, PDO::PARAM_STR);
-			$stmt2->bindParam(':apellido_1', $apellido_1, PDO::PARAM_STR);
+		if ($email) {
+			$email = "%$email%";
+			$stmt->bindParam(':email', $email, PDO::PARAM_STR);
+			$stmt2->bindParam(':email', $email, PDO::PARAM_STR);
 		}
 
 		$stmt2->execute();
@@ -98,28 +108,39 @@
 			
 			$stmt->execute();
 			$stmt->setFetchMode(PDO::FETCH_ASSOC);
-
+			echo "<h1>Datos de los Alumnos</h1>";
 			echo "<table border='1'>";
 			echo "<tr>";
-			echo "<td>DNI</td>";
 			echo "<td>Nombre</td>";
-			echo "<td>Apellido1</td>";
-			echo "<td>Apellido2</td>";
-			echo "<td>Direccion</td>";
+			echo "<td>CIF</td>";
+			echo "<td>Nombre Fiscal</td>";
+			echo "<td>Email</td>";
+			echo "<td>Dirección</td>";
 			echo "<td>Localidad</td>";
 			echo "<td>Provincia</td>";
-			echo "<td>Fecha de nacimiento</td>";
+			echo "<td>NºPlazas</td>";
+			echo "<td>Telefono</td>";
+			echo "<td>Persona de Contacto</td>";
+			echo "<td >Seleccionar Prioridad</td>";
 			echo "</tr>";
 			while ($row = $stmt->fetch()) {
 				echo "<tr>";
-				echo "<td>{$row['DNI']}</td>";
-				echo "<td>{$row['NOMBRE']}</td>";
-				echo "<td>{$row['APELLIDO_1']}</td>";
-				echo "<td>{$row['APELLIDO_2']}</td>";
-				echo "<td>{$row['DIRECCION']}</td>";
-				echo "<td>{$row['LOCALIDAD']}</td>";
-				echo "<td>{$row['PROVINCIA']}</td>";
-				echo "<td>{$row['FECHA_NACIMIENTO']}</td>";
+				echo "<td>{$row['nombre']}</td>";
+				echo "<td>{$row['cif']}</td>";
+				echo "<td>{$row['nombre_fiscal']}</td>";
+				echo "<td>{$row['email']}</td>";
+				echo "<td>{$row['direccion']}</td>";
+				echo "<td>{$row['localidad']}</td>";
+				echo "<td>{$row['provincia']}</td>";
+				echo "<td>{$row['numero_plazas']}</td>";
+				echo "<td>{$row['telefono']}</td>";
+				echo "<td>{$row['persona_contacto']}</td>";
+				echo "<td>
+           				<form action='priorizarEmpresa.php' method='POST'>
+            				<input type='hidden' name='dar_prioridad' value='{$row["nombre"]}'>
+            				<input type='submit' name='priorizar' value='Priorizar'>
+           				</form>
+          			</td>";
 				echo "</tr>";
 			}
 			echo "</table>";
@@ -139,15 +160,13 @@
 	<!--Para recuperar el valor de la pagina actual al recargar el formulario-->
 	<input type="hidden" name="paginado_inicio" value="<?php echo $paginado_inicio; ?>">
 </form>
+
 	<?php
-	
 		echo "Numero de registros total: ".$num_registros;
 		echo " Total de páginas: ".$num_paginas;
-		
-	
 		}
 		catch(PDOException $e){
-			echo "Error en la conexion con la base de datos" .$e->getMessage();
+			echo "Error" .$e->getMessage();
 		}
 	?>
 </body>

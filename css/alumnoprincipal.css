@@ -1,0 +1,37 @@
+body{
+    margin: 0%;
+    padding: 0%;
+}
+nav{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: lightskyblue;
+    border-bottom: 2px black solid;
+    padding-left: 3%;
+    padding-right: 3%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+a{
+    text-decoration: none;
+    color: black;
+}
+section{
+    display: flex;
+    gap: 50px;
+    margin: 10% 33%;  
+    flex-wrap: wrap;
+    width: 50%;
+    
+}
+section > div{
+    border: 1px solid black;
+    border-radius: 8px;
+    font-weight: bold;
+    padding: 50px 70px;
+    width: 120px;
+    text-align: center;
+    background-color: lightskyblue;
+}
