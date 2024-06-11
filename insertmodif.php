@@ -3,7 +3,7 @@ session_start();
 if (empty($_SESSION['id'])) {
     header("location: login.php");
 }
-
+print_r($_POST);
 $email= $_POST['email'] ?? null;
 $nia=$_POST["nia"] ?? null;
 $telefono=$_POST["telefono"] ?? null;
@@ -13,14 +13,14 @@ $password=$_POST["password"] ?? null;
 $modo_edicion=$_POST["modo_edicion"] ?? null;
 $modoEdicion=$_POST["modoEdicion"] ?? null;
 
-if(isset($_POST['editar']) || (isset($_POST['modoEdicion']))){
+if(isset($_POST['editar']) || (isset($_POST['modoEdicion']) && ($_POST['modoEdicion']))){
     $modo_edicion=true;
 }else{
     $modo_edicion=false;
 }
 
-    //echo "edic: ".$modo_edicion;
-    //exit();
+//echo "edic: ".$modo_edicion;
+//exit();
 
 
 include ("conexion.php");
@@ -158,7 +158,7 @@ if(isset($_POST['cancelar'])){
         <input type="text" name="password" value="<?php echo $password?>" > <br>
         <input type="submit" name="guardar" value="guardar"> 
         <input type="hidden" name="modoEdicion" value="<?php echo $modo_edicion?>">
-        <input type="submit" value="cancelar">
+        <input type="submit" value="cancelar" href="datosAlumnosTutor.php">
         </form>
     </fieldset>
 </body>
