@@ -3,7 +3,7 @@ session_start();
 if (empty($_SESSION['id'])) {
     header("location: login.php");
 }
-print_r($_POST);
+
 $email= $_POST['email'] ?? null;
 $nia=$_POST["nia"] ?? null;
 $telefono=$_POST["telefono"] ?? null;
@@ -13,7 +13,7 @@ $password=$_POST["password"] ?? null;
 $modo_edicion=$_POST["modo_edicion"] ?? null;
 $modoEdicion=$_POST["modoEdicion"] ?? null;
 
-if(isset($_POST['editar']) || (isset($_POST['modoEdicion']) && ($_POST['modoEdicion'])) ){
+if(isset($_POST['editar']) || (isset($_POST['modoEdicion']))){
     $modo_edicion=true;
 }else{
     $modo_edicion=false;
@@ -24,7 +24,8 @@ if(isset($_POST['editar']) || (isset($_POST['modoEdicion']) && ($_POST['modoEdic
 
 
 include ("conexion.php");
-if($modo_edicion===true){
+try{
+if($modo_edicion==true){
     if(isset($_POST['guardar'])){
         $sql_modif = "UPDATE alumno SET email = :email, nia = :nia, telefono = :telefono, nombre = :nombre, cv_file = :cv_file, password = :password WHERE email = :email";
     
@@ -40,21 +41,31 @@ if($modo_edicion===true){
         $stmt2 = $pdo->prepare($sql_modif);
         $stmt2->execute($datos);
         
-        header("locate:datosAlumnosTutor.php");
+        header("location:datosAlumnosTutor.php");
     }
 }else{
 
     if (isset($_POST['guardar'])){
 
-        $sql="INSERT INTO alumno values (:email, :nia, :telefono, :nombre, :cv_file, ':password')";
+        $sql="INSERT INTO alumno values (:email, :nia, :telefono, :nombre, :cv_file, :password)";
         
-        $datos=[];
+        $datos=[
+            ":email"=>$email,
+            ":nia"=>$nia,
+            ":telefono"=>$telefono,
+            ":nombre"=>$nombre,
+            ":cv_file"=>$cv_file,
+            ":password"=>$password
+        ];
         
         $stmt=$pdo->prepare($sql);
-        $stmt->execute();
-        header("locate:datosAlumnosTutor.php");
+        $stmt->execute($datos);
+        header("location:datosAlumnosTutor.php");
        
     }
+}
+}catch(PDOException $e){
+    echo "Error en la conexion con la base de datos" .$e->getMessage();
 }
 
 
@@ -145,7 +156,7 @@ if(isset($_POST['cancelar'])){
         <input type="text" name="cv_file" value="<?php echo $cv_file?>" > <br>
         <label>Contraseña </label>
         <input type="text" name="password" value="<?php echo $password?>" > <br>
-        <input type="submit" value="guardar"> 
+        <input type="submit" name="guardar" value="guardar"> 
         <input type="hidden" name="modoEdicion" value="<?php echo $modo_edicion?>">
         <input type="submit" value="cancelar">
         </form>
