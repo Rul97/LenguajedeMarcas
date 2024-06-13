@@ -10,22 +10,25 @@ $telefono=$_POST["telefono"] ?? null;
 $nombre = $_POST["nombre"] ?? null;
 $cv_file=$_POST["cv_file"] ?? null;
 $password=$_POST["password"] ?? null;
-$modo_edicion=$_POST["modo_edicion"] ?? null;
-$modoEdicion=$_POST["modoEdicion"] ?? null;
-
-if(isset($_POST['editar']) || (isset($_POST['modoEdicion']) && ($_POST['modoEdicion']))){
-    $modo_edicion=true;
-}else{
-    $modo_edicion=false;
+//Prueba con una ternaria
+//if((isset($_POST['accion']) && $_POST['accion'] == "Modificar")) ? "Modificar" : "Insertar";
+//$modoEdicion = ($accion == "Modificar");
+//Comprobamos que accion lleve datos para saber si vamos a insertar o modificar y en la segunda carga si el post de la variable accion lleva datos
+//sabremos si accion es igual a modificar nos llevara al if del update y si no lleva ningun tipo de datos al darle nos metera en la opcion insert
+if(isset($_POST['accion']) && $_POST['accion']=="Modificar"){
+     $accion="Modificar";
 }
+else{ 
+    $accion="Insertar";
+}
+$modoEdicion = ($accion == "Modificar");
 
-//echo "edic: ".$modo_edicion;
-//exit();
 
 
 include ("conexion.php");
 try{
-if($modo_edicion==true){
+if($modoEdicion===true){
+    print_r("Voy a modificar");
     if(isset($_POST['guardar'])){
         $sql_modif = "UPDATE alumno SET email = :email, nia = :nia, telefono = :telefono, nombre = :nombre, cv_file = :cv_file, password = :password WHERE email = :email";
     
@@ -45,7 +48,10 @@ if($modo_edicion==true){
     }
 }else{
 
+
     if (isset($_POST['guardar'])){
+
+        print_r("Voy a insertar");
 
         $sql="INSERT INTO alumno values (:email, :nia, :telefono, :nombre, :cv_file, :password)";
         
@@ -67,63 +73,6 @@ if($modo_edicion==true){
 }catch(PDOException $e){
     echo "Error en la conexion con la base de datos" .$e->getMessage();
 }
-
-
-
-
-/*
-if ((isset($_POST['guardar']))){
-    
-
-        $sql="INSERT INTO alumno values (:email, :nia, :telefono, :nombre, :cv_file, ':password')";
-        $datos = [
-            ":email"=>$email,
-            ":nia"=>$nia,
-            ":telefono"=>$telefono,
-            ":nombre"=>$nombre,
-            ":cv_file"=>$cv_file,
-            ":password"=>$password
-        ];
-      
-    $stmt=$pdo->prepare($sql);
-    $stmt->execute($datos);
-   
-}
-
-if ($formulario_lleno){
-    if((isset($_POST))){
-        include ("conexion.php");
-        $email=$_POST['email_editar'] ?? null;
-
-        $sql_select = "select * from alumno where email='".$email."';";
-        $datos=[
-            ":email"=>$email,
-            ":nia"=>$nia,
-            ":telefono"=>$telefono,
-            ":nombre"=>$nombre,
-            ":cv_file"=>$cv_file,
-            ":password"=>$password
-        ];
-        
-        $stmt=$pdo->prepare($sql_select);
-        $stmt->execute();
-
-
-
-    }
-}
-if(isset($_POST['cancelar'])){
-
-    $sql_modif = "UPDATE alumno SET email = :email, nia = :nia, telefono = :telefono, nombre = :nombre, cv_file = :cv_file, password = :password WHERE email = :email";
-
-    $datos=[];
-
-    $stmt2 = $pdo->prepare($sql_modif);
-    $stmt2->execute($datos);
-    
-    header("locate:datosAlumnosTutor.php");
-}
-*/
 ?>
 
 <!DOCTYPE html>
@@ -145,20 +94,27 @@ if(isset($_POST['cancelar'])){
     <fieldset>
         <form action="insertmodif.php" method="post">
         <label>Email </label>
-        <input type="text" name="email" value="<?php echo $email; ?>" required>
+        <input type="text" name="email"  pattern="[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]+" value="<?php echo $email; ?>" required>
         <label>Nia</label>
-        <input type="text" name="nia" pattern="[0-9]{8}" value="<?php echo $nia; ?>"  > <br>
+        <input type="text" name="nia" pattern="[0-9]{8}" value="<?php echo $nia; ?>"  required> <br>
+        <script>
+            var Input = document.getElementById(nia);
+            Input.oninvalid = function(event) {
+            event.target.setCustomValidity('Solo se permiten numeros.');
+            }   
+        </script>
         <label>Telefono </label>
         <input type="text" name="telefono" value="<?php echo $telefono; ?>" > <br>
         <label>Nombre </label>
-        <input type="text" name="nombre" value="<?php echo $nombre?>" > <br>
+        <input type="text" name="nombre" value="<?php echo $nombre?>" required > <br>
         <label>CV</label>
         <input type="text" name="cv_file" value="<?php echo $cv_file?>" > <br>
         <label>Contraseña </label>
         <input type="text" name="password" value="<?php echo $password?>" > <br>
         <input type="submit" name="guardar" value="guardar"> 
-        <input type="hidden" name="modoEdicion" value="<?php echo $modo_edicion?>">
-        <input type="submit" value="cancelar" href="datosAlumnosTutor.php">
+       <!-- <input type="hidden" name="modoEdicion" value="<?php echo $modoEdicion?>">-->
+        <input type="hidden" name="accion" value="<?php echo $accion; ?>">
+        <input type="submit" value="cancelar">
         </form>
     </fieldset>
 </body>

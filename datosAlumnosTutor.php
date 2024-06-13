@@ -136,7 +136,7 @@ if (empty($_SESSION['id'])) {
 							<input type='hidden' name='telefono' value='{$row["telefono"]}'>
 							<input type='hidden' name='nombre' value='{$row["nombre"]}'>
 							<input type='hidden' name='cv_file' value='{$row["cv_file"]}'>
-            				<input type='submit' name='editar' value='Editar'>
+            				<input type='submit' name='accion' value='Modificar'>
             			</form>
             		</td>";
 				echo "</tr>";
